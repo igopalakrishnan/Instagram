@@ -11,11 +11,11 @@ const sendgridTransport = require('nodemailer-sendgrid-transport');
 
 
 
-const transpoter = nodemailer.createTransport(sendgridTransport({
+/* const transporter = nodemailer.createTransport(sendgridTransport({
     auth: {
         api_key: "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"
     }
-}))
+})) */
 
 
 router.post('/signup', (req, res) => {
@@ -38,12 +38,12 @@ router.post('/signup', (req, res) => {
                     })
                     user.save()
                         .then(user => {
-                            transpoter.sendMail({
+                            /* transporter.sendMail({
                                 to: user.email,
                                 from: "no-reply@insta.com",
                                 subject: "Signup success",
                                 html: "<h1>Welcome to Instagram-clone<h1>"
-                            })
+                            }) */
                             return res.status(200).json({ message: "saved successfully" });
                         })
                         .catch(err => {
