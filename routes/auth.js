@@ -6,6 +6,16 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../config/keys');
 const requireLogin = require('../middleware/requireLogin');
+const nodemailer = require('nodemailer');
+const sendgridTransport = require('nodemailer-sendgrid-transport');
+
+
+
+const transpoter = nodemailer.createTransport(sendgridTransport({
+    auth: {
+        api_key: "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"
+    }
+}))
 
 
 router.post('/signup', (req, res) => {
@@ -28,6 +38,12 @@ router.post('/signup', (req, res) => {
                     })
                     user.save()
                         .then(user => {
+                            transpoter.sendMail({
+                                to: user.email,
+                                from: "no-reply@insta.com",
+                                subject: "Signup success",
+                                html: "<h1>Welcome to Instagram-clone<h1>"
+                            })
                             return res.status(200).json({ message: "saved successfully" });
                         })
                         .catch(err => {
@@ -58,8 +74,8 @@ router.post('/signin', (req, res) => {
                         //return res.status(200).json({ message: "User Successfully Signed in" })
 
                         const token = jwt.sign({ _id: savedUser._id }, JWT_SECRET)
-                        const {_id, name, email,followers,following, pic} = savedUser;
-                        res.status(200).json({ token, user: {_id, name, email, followers, following, pic} });
+                        const { _id, name, email, followers, following, pic } = savedUser;
+                        res.status(200).json({ token, user: { _id, name, email, followers, following, pic } });
                     }
                     else {
                         return res.status(400).json({ error: "Invalid email or password" });
